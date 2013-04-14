@@ -238,7 +238,14 @@ class StandardRobot(Robot):
         Move the robot to a new position and mark the tile it is on as having
         been cleaned.
         """
-        raise NotImplementedError
+        newPos = self.position.getNewPosition(self.direction, self.speed)
+
+        while not self.room.isPositionInRoom(newPos):
+            self.setRobotDirection(random.randint(0, 360))
+            newPos = self.position.getNewPosition(self.direction, self.speed)
+
+        self.position = newPos
+        self.room.cleanTileAtPosition(self.position)
 
 # Uncomment this line to see your implementation of StandardRobot in action!
 ##testRobotMovement(StandardRobot, RectangularRoom)
@@ -263,7 +270,28 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
     robot_type: class of robot to be instantiated (e.g. StandardRobot or
                 RandomWalkRobot)
     """
-    raise NotImplementedError
+    timeList = []
+    for trial in range(num_trials):
+        #anim = ps7_visualize.RobotVisualization(num_robots, width, height)
+        time = 0
+        room = RectangularRoom(width, height)
+        robots = [robot_type(room, speed) for x in range(num_robots)]
+
+        while float(room.getNumCleanedTiles()) / float(room.getNumTiles()) < min_coverage:
+
+            for robot in robots:
+                #anim.update(room, robots)
+                robot.updatePositionAndClean()
+
+            time += 1
+
+        timeList.append(time)
+
+        #anim.done()
+
+    meanTime = float(sum(timeList)) / float(len(timeList))
+
+    return meanTime
 
 
 # === Problem 4
