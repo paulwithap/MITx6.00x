@@ -127,11 +127,7 @@ class RectangularRoom(object):
 
         returns: an integer
         """
-        count = 0
-        for tile in self.tiles.values():
-            if tile == 1:
-                count += 1
-        return count
+        return self.tiles.values().count(1)
 
     def getRandomPosition(self):
         """
